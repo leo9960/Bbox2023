@@ -24637,6 +24637,34 @@
                 me.mMouseIsDown = false;
                 if (me.mIsPaused) me.mForceFrame = true;
             }
+            this.mCanvas.ontouchstart = function(ev) {
+                var rect = me.mCanvas.getBoundingClientRect();
+                var touch = ev.touches[0]; // Get the first touch in the touch list
+                me.mMouseOriX = Math.floor((touch.clientX - rect.left) / (rect.right - rect.left) * me.mCanvas.width);
+                me.mMouseOriY = Math.floor(me.mCanvas.height - (touch.clientY - rect.top) / (rect.bottom - rect.top) * me.mCanvas.height);
+                me.mMousePosX = me.mMouseOriX;
+                me.mMousePosY = me.mMouseOriY;
+                me.mMouseIsDown = true;
+                me.mMouseSignalDown = true;
+                if (me.mIsPaused) me.mForceFrame = true;
+                // return false; // prevent touch event propagation
+            }
+
+            this.mCanvas.ontouchmove = function(ev) {
+                if (me.mMouseIsDown) {
+                    var rect = me.mCanvas.getBoundingClientRect();
+                    var touch = ev.touches[0]; // Get the first touch in the touch list
+                    me.mMousePosX = Math.floor((touch.clientX - rect.left) / (rect.right - rect.left) * me.mCanvas.width);
+                    me.mMousePosY = Math.floor(me.mCanvas.height - (touch.clientY - rect.top) / (rect.bottom - rect.top) * me.mCanvas.height);
+                    if (me.mIsPaused) me.mForceFrame = true;
+                }
+            }
+
+            this.mCanvas.ontouchend = function(ev) {
+                me.mMouseIsDown = false;
+                if (me.mIsPaused) me.mForceFrame = true;
+            }
+
 
             /*this.mCanvas.addEventListener("keydown", function(ev) {
                 me.mEffect.SetKeyDown(me.mActiveDoc, ev.keyCode);
